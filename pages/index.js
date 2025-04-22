@@ -50,7 +50,7 @@ export default function DiagnosisApp() {
       answers,
       timestamp: new Date().toISOString(),
     };
-    await fetch("https://your-endpoint.com/api/save", {
+    await fetch("https://script.google.com/macros/s/AKfycbx30W6r5jDSU9OhRjhENjLS4eyrk5kcMDXBhw8hRDBYk7sYuoK2WEKMB6UOs_LrdGa8fQ/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -91,7 +91,14 @@ export default function DiagnosisApp() {
         <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 24 }}>
           <h2 style={{ fontSize: 28, fontWeight: "bold", textAlign: "center", marginBottom: 16 }}>診断結果</h2>
           <pre style={{ whiteSpace: "pre-wrap", fontSize: 16 }}>{resultMessages[type]}</pre>
-          <button onClick={() => { setAnswers({}); setShowResult(false); setStarted(false); }} style={{ width: "100%", marginTop: 16, padding: 10, background: "black", color: "white" }}>
+          <button
+            onClick={() => {
+              setAnswers({});
+              setShowResult(false);
+              setStarted(false);
+            }}
+            style={{ width: "100%", marginTop: 16, padding: 10, background: "black", color: "white" }}
+          >
             もう一度診断する
           </button>
         </div>
@@ -113,7 +120,13 @@ export default function DiagnosisApp() {
               <button
                 key={val}
                 onClick={() => handleAnswer(q.id, val)}
-                style={{ padding: "6px 12px", background: answers[q.id] === val ? "black" : "white", color: answers[q.id] === val ? "white" : "black", border: "1px solid black", borderRadius: 4 }}
+                style={{
+                  padding: "6px 12px",
+                  background: answers[q.id] === val ? "black" : "white",
+                  color: answers[q.id] === val ? "white" : "black",
+                  border: "1px solid black",
+                  borderRadius: 4,
+                }}
               >
                 {val}
               </button>
@@ -121,7 +134,13 @@ export default function DiagnosisApp() {
           </div>
         </div>
       ))}
-      <button onClick={() => { setShowResult(true); handleSubmit(); }} style={{ width: "100%", padding: 12, background: "black", color: "white", fontSize: 16 }}>
+      <button
+        onClick={() => {
+          setShowResult(true);
+          handleSubmit();
+        }}
+        style={{ width: "100%", padding: 12, background: "black", color: "white", fontSize: 16 }}
+      >
         診断結果をみる
       </button>
     </div>

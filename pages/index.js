@@ -15,11 +15,31 @@ const questions = [
   { id: 12, text: "直接関わらなくても、熱量を感じて一体感を味わいたい", type: "advocate" },
 ];
 
-const resultMessages = {
-  initiator: `あなたは『起案者タイプ』！\n\nビジョンを掲げて、自ら新しい道を切り開くリーダーシップのあるタイプです。あなたの発想力と行動力は、多くの人を巻き込んで新しい価値を生み出す原動力になります。\n\n次のステップ：自分のアイデアを発表したり、共感してくれるメンバーを探してみましょう。`,
-  member: `あなたは『メンバータイプ』！\n\n誰かの挑戦に共感し、目標達成に向けて力を発揮する協調型の実行者です。チームで動くときにこそ、あなたのスキルや粘り強さが生きてきます。\n\n次のステップ：気になる起案者のアイデアに参加してみましょう。`,
-  supporter: `あなたは『サポータータイプ』！\n\n経験や知識を活かして、裏方からチームを支える縁の下の力持ち。起案者やチームの悩みに寄り添い、冷静なアドバイスで導くことができます。\n\n次のステップ：プロジェクトの壁打ち相手や、伴走支援者として関わってみましょう。`,
-  advocate: `あなたは『応援者タイプ』！\n\n挑戦を見つけて応援し、共感の輪を広げる存在です。あなたの一言が、プロジェクトを動かす後押しになります。\n\n次のステップ：共感した取り組みをシェアしたり、応援の声を届けてみましょう。`,
+const resultDetails = {
+  initiator: {
+    title: "あなたは『起案者タイプ』！",
+    description:
+      "ビジョンを掲げて、自ら新しい道を切り開くリーダーシップのあるタイプです。あなたの発想力と行動力は、多くの人を巻き込んで新しい価値を生み出す原動力になります。\n\n次のステップ：自分のアイデアを発表したり、共感してくれるメンバーを探してみましょう。",
+    image: "/initiator.png",
+  },
+  member: {
+    title: "あなたは『メンバータイプ』！",
+    description:
+      "誰かの挑戦に共感し、目標達成に向けて力を発揮する協調型の実行者です。チームで動くときにこそ、あなたのスキルや粘り強さが生きてきます。\n\n次のステップ：気になる起案者のアイデアに参加してみましょう。",
+    image: "/member.png",
+  },
+  supporter: {
+    title: "あなたは『サポータータイプ』！",
+    description:
+      "経験や知識を活かして、裏方からチームを支える縁の下の力持ち。起案者やチームの悩みに寄り添い、冷静なアドバイスで導くことができます。\n\n次のステップ：プロジェクトの壁打ち相手や、伴走支援者として関わってみましょう。",
+    image: "/supporter.png",
+  },
+  advocate: {
+    title: "あなたは『応援者タイプ』！",
+    description:
+      "挑戦を見つけて応援し、共感の輪を広げる存在です。あなたの一言が、プロジェクトを動かす後押しになります。\n\n次のステップ：共感した取り組みをシェアしたり、応援の声を届けてみましょう。",
+    image: "/advocate.png",
+  },
 };
 
 export default function DiagnosisApp() {
@@ -57,92 +77,101 @@ export default function DiagnosisApp() {
     });
   };
 
-  if (!started) {
-    return (
-      <div style={{ padding: 24, maxWidth: 600, margin: "0 auto" }}>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 24 }}>
-          <h2 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 16 }}>診断スタート前にご入力ください</h2>
-          <input
-            type="text"
-            placeholder="名前"
-            style={{ width: "100%", marginBottom: 12, padding: 8 }}
-            value={userInfo.name}
-            onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
-          />
-          <input
-            type="email"
-            placeholder="メールアドレス"
-            style={{ width: "100%", marginBottom: 12, padding: 8 }}
-            value={userInfo.email}
-            onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
-          />
-          <button onClick={() => setStarted(true)} style={{ width: "100%", padding: 10, background: "black", color: "white" }}>
-            診断をはじめる
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (showResult) {
-    const type = calculateResult();
-    return (
-      <div style={{ padding: 24, maxWidth: 600, margin: "0 auto" }}>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 24 }}>
-          <h2 style={{ fontSize: 28, fontWeight: "bold", textAlign: "center", marginBottom: 16 }}>診断結果</h2>
-          <pre style={{ whiteSpace: "pre-wrap", fontSize: 16 }}>{resultMessages[type]}</pre>
-          <button
-            onClick={() => {
-              setAnswers({});
-              setShowResult(false);
-              setStarted(false);
-            }}
-            style={{ width: "100%", marginTop: 16, padding: 10, background: "black", color: "white" }}
-          >
-            もう一度診断する
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const renderScale = (id) => (
+    <div className="flex justify-between items-center gap-1 mt-2">
+      {[1, 2, 3, 4, 5].map((val) => (
+        <button
+          key={val}
+          onClick={() => handleAnswer(id, val)}
+          className={`w-10 h-10 rounded-full border text-sm font-medium transition-all duration-150 ${
+            answers[id] === val
+              ? "bg-indigo-600 text-white border-indigo-600"
+              : "bg-white text-gray-700 border-gray-300 hover:border-indigo-400"
+          }`}
+        >
+          {val}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
-    <div style={{ padding: 24, maxWidth: 600, margin: "0 auto" }}>
-      <div style={{ marginBottom: 24, textAlign: "center" }}>
-        <h1 style={{ fontSize: 28, fontWeight: "bold" }}>あなたに合った参加スタイルを診断</h1>
-        <p style={{ color: "#555" }}>簡単な質問に答えて、あなたの適性をチェックしましょう！</p>
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+        {!started ? (
+          <>
+            <h1 className="text-2xl font-bold mb-4 text-center">あなたに合った挑戦スタイル診断</h1>
+            <input
+              type="text"
+              placeholder="名前"
+              className="w-full border rounded px-3 py-2 mb-3"
+              value={userInfo.name}
+              onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+            />
+            <input
+              type="email"
+              placeholder="メールアドレス"
+              className="w-full border rounded px-3 py-2 mb-4"
+              value={userInfo.email}
+              onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+            />
+            <button
+              className="w-full bg-indigo-600 text-white py-2 rounded font-semibold hover:bg-indigo-700"
+              onClick={() => setStarted(true)}
+            >
+              診断をはじめる
+            </button>
+          </>
+        ) : showResult ? (
+          (() => {
+            const type = calculateResult();
+            const result = resultDetails[type];
+            return (
+              <>
+                <h2 className="text-2xl font-bold mb-4 text-center">診断結果</h2>
+                <img
+                  src={result.image}
+                  alt={type}
+                  className="w-48 h-48 mx-auto mb-4 rounded shadow"
+                />
+                <h3 className="text-xl font-semibold mb-2 text-center">{result.title}</h3>
+                <p className="whitespace-pre-wrap mb-4 text-gray-800 text-sm text-center">{result.description}</p>
+                <button
+                  onClick={() => {
+                    setAnswers({});
+                    setShowResult(false);
+                    setStarted(false);
+                  }}
+                  className="w-full mt-4 bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200"
+                >
+                  もう一度診断する
+                </button>
+              </>
+            );
+          })()
+        ) : (
+          <>
+            <h2 className="text-xl font-semibold mb-4 text-center">12の質問にお答えください</h2>
+            <div className="space-y-6">
+              {questions.map((q) => (
+                <div key={q.id} className="bg-gray-50 border rounded p-4">
+                  <p className="text-gray-800 font-medium mb-2">{q.text}</p>
+                  {renderScale(q.id)}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => {
+                setShowResult(true);
+                handleSubmit();
+              }}
+              className="w-full mt-6 bg-indigo-600 text-white py-2 rounded font-semibold hover:bg-indigo-700"
+            >
+              診断結果をみる
+            </button>
+          </>
+        )}
       </div>
-      {questions.map((q) => (
-        <div key={q.id} style={{ border: "1px solid #eee", borderRadius: 8, padding: 16, marginBottom: 12 }}>
-          <p style={{ marginBottom: 8, fontWeight: "bold" }}>{q.text}</p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {[1, 2, 3, 4, 5].map((val) => (
-              <button
-                key={val}
-                onClick={() => handleAnswer(q.id, val)}
-                style={{
-                  padding: "6px 12px",
-                  background: answers[q.id] === val ? "black" : "white",
-                  color: answers[q.id] === val ? "white" : "black",
-                  border: "1px solid black",
-                  borderRadius: 4,
-                }}
-              >
-                {val}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={() => {
-          setShowResult(true);
-          handleSubmit();
-        }}
-        style={{ width: "100%", padding: 12, background: "black", color: "white", fontSize: 16 }}
-      >
-        診断結果をみる
-      </button>
     </div>
   );
 }
